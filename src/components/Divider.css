@@ -1,0 +1,17 @@
+.divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 28px 10px;
+}
+
+.divider span {
+    flex: 1;
+    height: 1px;
+    background: #4b5563;
+}
+
+.divider p {
+    color: #9ca3af;
+    font-size: 14px;
+}

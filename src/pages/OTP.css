@@ -1,0 +1,92 @@
+
+.otp-page {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #f2f2f5;
+    padding: 30px 20px;
+    color: white;
+}
+
+.otp-content {
+    width: 100%;
+    max-width: 450px;
+    text-align: center;
+}
+
+.otp-content h1 {
+    font-size: 32px;
+    margin-bottom: 15px;
+    color: #101010;
+}
+
+.otp-subtitle {
+    color: #aaa;
+    font-size: 15px;
+}
+
+.otp-email {
+    color: #51ADE8;
+    margin: 12px 0 30px;
+    font-weight: 600;
+}
+
+.otp-content form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.otp-content input {
+    width: 100%;
+    padding: 16px;
+    border: 1px solid #454545;
+    border-radius: 8px;
+    background: #b3def6;
+    color: rgb(6, 6, 6);
+    font-size: 20px;
+    text-align: center;
+    letter-spacing: 8px;
+    outline: none;
+}
+
+.otp-content input:focus {
+    border-color: #51ADE8;
+}
+
+.otp-button {
+    padding: 16px;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(90deg, #3B71C1, #51ADE8);
+    color: white;
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.otp-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.resend-text {
+    color: #aaa;
+    margin-top: 25px;
+    font-size: 14px;
+}
+
+.resend-text button,
+.back-button {
+    background: none;
+    border: none;
+    color: #51ADE8;
+    cursor: pointer;
+    font-size: 14px;
+    margin-left: 5px;
+}
+
+.back-button {
+    margin-top: 20px;
+}
