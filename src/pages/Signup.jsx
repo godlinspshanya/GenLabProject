@@ -20,7 +20,6 @@ function Signup() {
         setError("");
 
         try {
-            // Send email to backend to generate OTP
             const response = await fetch(
                 "http://localhost:5000/api/auth/send-otp",
                 {
@@ -29,7 +28,9 @@ function Signup() {
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify({
-                        email: email.trim()
+                        name: name.trim(),
+                        email: email.trim().toLowerCase(),
+                        purpose: "signup"
                     })
                 }
             );
@@ -37,14 +38,13 @@ function Signup() {
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.message || "Failed to send OTP");
+                throw new Error(data.message || "Unable to send OTP");
             }
 
-            // Navigate to OTP page after successful email sending
             navigate("/verify-otp", {
                 state: {
-                    email: email.trim(),
                     name: name.trim(),
+                    email: email.trim().toLowerCase(),
                     purpose: "signup"
                 }
             });
