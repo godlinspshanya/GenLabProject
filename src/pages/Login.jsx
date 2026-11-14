@@ -6,7 +6,7 @@ import Logo from "../components/Logo";
 import GoogleButton from "../components/GoogleButton";
 import Divider from "../components/Divider";
 import InputField from "../components/InputField";
-
+import.meta.env.VITE_API_URL
 import "./Login.css";
 
 function Login() {
@@ -24,7 +24,7 @@ function Login() {
 
         try {
             const response = await fetch(
-                "http://localhost:5000/api/auth/login",
+                `${import.meta.env.VITE_API_URL}/api/auth/login`,
                 {
                     method: "POST",
                     headers: {

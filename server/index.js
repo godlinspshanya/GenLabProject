@@ -30,7 +30,7 @@ const googleClient = new OAuth2Client(
 const allowedOrigins = [
     "http://localhost:5173",
     "http://localhost:5174",
-    "https://gen-lab-project.vercel.app"
+    process.env.FRONTEND_URL
 ].filter(Boolean);
 
 app.use(cors({
