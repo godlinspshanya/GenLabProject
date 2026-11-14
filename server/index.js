@@ -14,33 +14,91 @@ import {
 import User from "./models/User.js";
 
 dotenv.config();
-// ---------- GOOGLE AUTH CLIENT ----------
-const googleClient = new OAuth2Client(
-    process.env.GOOGLE_CLIENT_ID,
-    process.env.GOOGLE_CLIENT_SECRET,
-    "postmessage" // special value used for the popup (auth-code) flow
-);
 
 const app = express();
 
+// ---------- GOOGLE AUTH CLIENT ----------
+
+const googleClient = new OAuth2Client(
+    process.env.GOOGLE_CLIENT_ID,
+    process.env.GOOGLE_CLIENT_SECRET,
+    "postmessage"
+);
+
+// ---------- CORS CONFIGURATION ----------
+
+const allowedOrigins = [
+    "http://localhost:5173",
+    "http://localhost:5174",
+    "https://gen-lab-project.vercel.app"
+].filter(Boolean);
+
 app.use(cors({
-    origin: ["http://localhost:5173", "http://localhost:5174"]
+    origin: allowedOrigins,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    credentials: true
 }));
 
 app.use(express.json());
 
+// ---------- HEALTH CHECK ----------
+
+app.get("/", (req, res) => {
+    res.status(200).json({
+        message: "PageFlows Backend is running!"
+    });
+});
+
 // ---------- MONGODB CONNECTION ----------
+
+let dbPromise;
+
 const connectDB = async () => {
-    try {
-        await mongoose.connect(process.env.MONGO_URI);
-        console.log("MongoDB Atlas Connected Successfully!");
-    } catch (error) {
-        console.error("MongoDB Connection Failed:", error.message);
-        process.exit(1);
+
+    if (mongoose.connection.readyState === 1) {
+        return;
     }
+
+    if (!process.env.MONGO_URI) {
+        throw new Error("MONGO_URI is missing");
+    }
+
+    // Reconnect if the previous connection was disconnected.
+    if (mongoose.connection.readyState !== 2) {
+        dbPromise = null;
+    }
+
+    if (!dbPromise) {
+        dbPromise = mongoose.connect(process.env.MONGO_URI)
+            .then(() => {
+                console.log("MongoDB Atlas Connected Successfully!");
+            })
+            .catch((error) => {
+                dbPromise = null;
+                console.error("MongoDB Connection Failed:", error.message);
+                throw error;
+            });
+    }
+
+    return dbPromise;
 };
 
+// Connect to MongoDB before handling API requests.
+app.use("/api", async (req, res, next) => {
+    try {
+        await connectDB();
+        next();
+    } catch (error) {
+        console.error("Database Error:", error.message);
+
+        res.status(503).json({
+            message: "Database connection failed"
+        });
+    }
+});
+
 // ---------- NODEMAILER CONFIGURATION ----------
+
 const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -50,6 +108,10 @@ const transporter = nodemailer.createTransport({
 });
 
 // ---------- OTP STORAGE ----------
+
+// Temporary in-memory storage.
+// Move this to MongoDB for reliable serverless OTP verification.
+
 const otpStore = new Map();
 
 const hashOTP = (otp) =>
@@ -57,16 +119,17 @@ const hashOTP = (otp) =>
         .update(String(otp))
         .digest("hex");
 
-
 // ---------- SEND OTP ----------
+
 app.post("/api/auth/send-otp", async (req, res) => {
+
     try {
-        const email = String(req.body.email || "")
+        const email = String(req.body?.email || "")
             .trim()
             .toLowerCase();
 
-        const name = String(req.body.name || "").trim();
-        const purpose = req.body.purpose;
+        const name = String(req.body?.name || "").trim();
+        const purpose = req.body?.purpose;
 
         if (!email) {
             return res.status(400).json({
@@ -86,7 +149,7 @@ app.post("/api/auth/send-otp", async (req, res) => {
             });
         }
 
-        // Check user in MongoDB
+        // Check existing user in MongoDB.
         const existingUser = await User.findOne({ email });
 
         if (existingUser) {
@@ -95,29 +158,31 @@ app.post("/api/auth/send-otp", async (req, res) => {
             });
         }
 
-        // Generate 6-digit OTP
+        // Generate 6-digit OTP.
         const otp = randomInt(100000, 1000000);
 
-        // Send OTP using Gmail
+        // Send OTP using Gmail.
         await transporter.sendMail({
-            from: `"Page Flows" <${process.env.GMAIL_USER}>`,
+            from: `"Task Manager System" <${process.env.GMAIL_USER}>`,
             to: email,
-            subject: "Your Page Flows OTP",
+            subject: "Your Task Manager OTP",
             text: `Your verification code is ${otp}. It expires in 5 minutes.`,
             html: `
                 <div style="font-family: Arial; padding: 20px;">
-                    <h2>Page Flows Verification</h2>
+                    <h2>Task Manager Verification</h2>
                     <p>Your verification code is:</p>
+
                     <h1 style="color: #3B71C1; letter-spacing: 5px;">
                         ${otp}
                     </h1>
+
                     <p>This OTP expires in 5 minutes.</p>
                     <p>Please don't share this code with anyone.</p>
                 </div>
             `
         });
 
-        // Store OTP only after email sending succeeds
+        // Store OTP after email sending succeeds.
         otpStore.set(email, {
             otpHash: hashOTP(otp),
             expiresAt: Date.now() + 5 * 60 * 1000,
@@ -139,11 +204,12 @@ app.post("/api/auth/send-otp", async (req, res) => {
     }
 });
 
-
 // ---------- EMAIL-ONLY LOGIN ----------
+
 app.post("/api/auth/login", async (req, res) => {
+
     try {
-        const email = String(req.body.email || "")
+        const email = String(req.body?.email || "")
             .trim()
             .toLowerCase();
 
@@ -156,10 +222,10 @@ app.post("/api/auth/login", async (req, res) => {
         const user = await User.findOne({ email });
 
         if (!user) {
-    return res.status(404).json({
-        message: "Account not found. Please sign up first."
-    });
-}
+            return res.status(404).json({
+                message: "Account not found. Please sign up first."
+            });
+        }
 
         return res.status(200).json({
             message: "Login successful",
@@ -179,15 +245,16 @@ app.post("/api/auth/login", async (req, res) => {
     }
 });
 
-
 // ---------- VERIFY OTP ----------
+
 app.post("/api/auth/verify-otp", async (req, res) => {
+
     try {
-        const email = String(req.body.email || "")
+        const email = String(req.body?.email || "")
             .trim()
             .toLowerCase();
 
-        const otp = String(req.body.otp || "").trim();
+        const otp = String(req.body?.otp || "").trim();
 
         if (!email || !/^\d{6}$/.test(otp)) {
             return res.status(400).json({
@@ -211,7 +278,7 @@ app.post("/api/auth/verify-otp", async (req, res) => {
             });
         }
 
-        // Check expiration
+        // Check expiration.
         if (Date.now() > record.expiresAt) {
             otpStore.delete(email);
 
@@ -220,7 +287,7 @@ app.post("/api/auth/verify-otp", async (req, res) => {
             });
         }
 
-        // Limit incorrect attempts
+        // Limit incorrect attempts.
         if (record.attempts >= 5) {
             otpStore.delete(email);
 
@@ -229,11 +296,12 @@ app.post("/api/auth/verify-otp", async (req, res) => {
             });
         }
 
-        // Compare OTP hashes
+        // Compare OTP hashes.
         const enteredHash = Buffer.from(hashOTP(otp), "hex");
         const storedHash = Buffer.from(record.otpHash, "hex");
 
         if (!timingSafeEqual(enteredHash, storedHash)) {
+
             record.attempts++;
 
             if (record.attempts >= 5) {
@@ -245,6 +313,7 @@ app.post("/api/auth/verify-otp", async (req, res) => {
             });
         }
 
+        // Check if account already exists.
         const existingUser = await User.findOne({ email });
 
         if (existingUser) {
@@ -255,13 +324,13 @@ app.post("/api/auth/verify-otp", async (req, res) => {
             });
         }
 
-        // Create account only after successful signup verification.
+        // Create account after successful verification.
         const user = await User.create({
             name: record.name,
             email
         });
 
-        // OTP can be used only once
+        // OTP can only be used once.
         otpStore.delete(email);
 
         return res.status(200).json({
@@ -287,10 +356,13 @@ app.post("/api/auth/verify-otp", async (req, res) => {
         });
     }
 });
+
 // ---------- GOOGLE LOGIN / SIGNUP ----------
+
 app.post("/api/auth/google", async (req, res) => {
+
     try {
-        const code = req.body.code;
+        const code = req.body?.code;
 
         if (!code) {
             return res.status(400).json({
@@ -298,10 +370,16 @@ app.post("/api/auth/google", async (req, res) => {
             });
         }
 
-        // 1. Exchange the code for tokens (this uses the client secret)
+        // Exchange authorization code for tokens.
         const { tokens } = await googleClient.getToken(code);
 
-        // 2. Verify the ID token really came from Google for OUR app
+        if (!tokens.id_token) {
+            return res.status(401).json({
+                message: "Google ID token is missing"
+            });
+        }
+
+        // Verify Google ID token.
         const ticket = await googleClient.verifyIdToken({
             idToken: tokens.id_token,
             audience: process.env.GOOGLE_CLIENT_ID
@@ -317,7 +395,7 @@ app.post("/api/auth/google", async (req, res) => {
 
         const email = payload.email.toLowerCase();
 
-        // 3. Find the user, or create one if this is their first time
+        // Find existing user or create a new one.
         let user = await User.findOne({ email });
 
         if (!user) {
@@ -337,7 +415,7 @@ app.post("/api/auth/google", async (req, res) => {
         });
 
     } catch (error) {
-        console.error("Google Auth Error:", error.message);
+        console.error("Google Auth Error:", error);
 
         return res.status(401).json({
             message: "Google sign-in failed. Please try again."
@@ -345,23 +423,22 @@ app.post("/api/auth/google", async (req, res) => {
     }
 });
 
+// ---------- VERCEL EXPORT ----------
 
-// ---------- START SERVER ----------
-const PORT = 5000;
 
-const startServer = async () => {
-    await connectDB();
+const PORT = process.env.PORT || 5000;
 
-    try {
-        await transporter.verify();
-        console.log("Gmail SMTP Connected Successfully!");
-    } catch (error) {
-        console.error("Gmail SMTP Connection Failed:", error.message);
-    }
-
-    app.listen(PORT, () => {
+// Start server locally, but let Vercel handle it when deployed
+if (process.env.VERCEL !== "1") {
+  connectDB()
+    .then(() => {
+      app.listen(PORT, () => {
         console.log(`Server running on port ${PORT}`);
+      });
+    })
+    .catch((error) => {
+      console.error("Server startup failed:", error);
     });
-};
+}
 
-startServer();
+export default app;

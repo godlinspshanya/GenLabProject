@@ -58,7 +58,7 @@ navigate("/home");
 
                 <Logo />
 
-                <h1>Log In to Page Flows</h1>
+                <h1>Log In to Student Task Manager</h1>
 
                 {loggedInUser ? (
                     <div role="status">
