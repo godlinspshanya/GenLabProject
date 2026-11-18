@@ -40,6 +40,10 @@ A full-stack Task Management application developed during my internship at **Gen
 ## 📁 Project Structure
 
 
+
+## 📁 Project Structure
+
+```text
 Task-Manager/
 │
 ├── public/
@@ -48,14 +52,12 @@ Task-Manager/
 │   ├── models/
 │   │   ├── User.js
 │   │   └── Task.js
-│   │
 │   ├── index.js
 │   ├── package.json
 │   ├── package-lock.json
 │   └── .env
 │
 ├── src/
-│   │
 │   ├── assets/
 │   │   ├── Google.png
 │   │   ├── hero.png
@@ -98,6 +100,8 @@ Task-Manager/
 ├── package-lock.json
 ├── README.md
 └── vite.config.js
+```
+
 
 ## ⚙️ Installation and Setup
 
