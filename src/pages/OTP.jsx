@@ -1,15 +1,18 @@
 
 import { useState } from "react";
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, Link, useNavigate } from "react-router-dom";
 
 import Logo from "../components/Logo";
 import "./OTP.css";
 
 function OTP() {
     const location = useLocation();
+    const navigate = useNavigate();
 
     const email = location.state?.email || "";
     const name = location.state?.name || "";
+    const phone = location.state?.phone || "";
+    const gender = location.state?.gender || "";
     const purpose = location.state?.purpose || "";
 
     const [otp, setOtp] = useState("");
@@ -21,6 +24,7 @@ function OTP() {
     const [user, setUser] = useState(null);
 
     // ---------- VERIFY OTP ----------
+
     const handleVerify = async (e) => {
         e.preventDefault();
 
@@ -44,7 +48,11 @@ function OTP() {
                     },
                     body: JSON.stringify({
                         email: email.trim().toLowerCase(),
-                        otp: otp
+                        otp: otp,
+                        name: name,
+                        phone: phone,
+                        gender: gender,
+                        purpose: purpose
                     })
                 }
             );
@@ -58,6 +66,21 @@ function OTP() {
             }
 
             setUser(data.user);
+
+            // LOGIN
+            if (purpose === "login") {
+                localStorage.setItem("token", data.token);
+
+                localStorage.setItem(
+                    "user",
+                    JSON.stringify(data.user)
+                );
+
+                navigate("/home", { replace: true });
+                return;
+            }
+
+            // SIGNUP
             setVerified(true);
 
         } catch (err) {
@@ -67,8 +90,8 @@ function OTP() {
         }
     };
 
-
     // ---------- RESEND OTP ----------
+
     const handleResend = async () => {
         setError("");
         setMessage("");
@@ -85,6 +108,8 @@ function OTP() {
                     body: JSON.stringify({
                         email: email.trim().toLowerCase(),
                         name: name,
+                        phone: phone,
+                        gender: gender,
                         purpose: purpose
                     })
                 }
@@ -108,9 +133,12 @@ function OTP() {
         }
     };
 
-
     // ---------- CHECK PAGE ACCESS ----------
-    if (!email || purpose !== "signup") {
+
+    if (
+        !email ||
+        !["signup", "login"].includes(purpose)
+    ) {
         return (
             <div className="otp-page">
                 <div className="otp-content">
@@ -119,7 +147,7 @@ function OTP() {
                     <h1>Verification unavailable</h1>
 
                     <p className="otp-subtitle">
-                        Please start again from the Signup page.
+                        Please start again from the Login or Signup page.
                     </p>
 
                     <Link to="/login">Go to Login</Link>
@@ -127,7 +155,6 @@ function OTP() {
             </div>
         );
     }
-
 
     return (
         <div className="otp-page">
@@ -137,7 +164,11 @@ function OTP() {
 
                 {!verified ? (
                     <>
-                        <h1>Verify your email</h1>
+                        <h1>
+                            {purpose === "login"
+                                ? "Verify to Login"
+                                : "Verify your email"}
+                        </h1>
 
                         <p className="otp-subtitle">
                             We've sent a verification code to
@@ -182,7 +213,9 @@ function OTP() {
                                 className="otp-button"
                                 disabled={loading || otp.length !== 6}
                             >
-                                {loading ? "Verifying..." : "Verify OTP"}
+                                {loading
+                                    ? "Verifying..."
+                                    : "Verify OTP"}
                             </button>
 
                         </form>
@@ -195,11 +228,17 @@ function OTP() {
                                 onClick={handleResend}
                                 disabled={resending}
                             >
-                                {resending ? "Sending..." : "Resend OTP"}
+                                {resending
+                                    ? "Sending..."
+                                    : "Resend OTP"}
                             </button>
                         </p>
 
-                        <Link to="/signup">Back</Link>
+                        <Link
+                            to={purpose === "login" ? "/login" : "/signup"}
+                        >
+                            Back
+                        </Link>
                     </>
                 ) : (
                     <>

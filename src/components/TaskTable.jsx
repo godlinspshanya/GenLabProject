@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import {
     List,
@@ -18,7 +19,7 @@ const priorityIcons = {
 
 const priorityRank = { High: 0, Medium: 1, Low: 2 };
 
-// "2026-11-13"  ->  "Nov 13, 2026"
+// Format date
 function formatDate(dateText) {
     return new Date(dateText + "T00:00:00").toLocaleDateString("en-US", {
         month: "short",
@@ -27,29 +28,31 @@ function formatDate(dateText) {
     });
 }
 
-function TaskTable({ tasks, onToggle, onDelete }) {
-    const [filter, setFilter] = useState("all");   // all | pending | completed
-    const [sortBy, setSortBy] = useState("date");  // date | priority
+function TaskTable({ tasks, onToggle, onDelete, onEdit }) {
+    const [filter, setFilter] = useState("all");
+    const [sortBy, setSortBy] = useState("date");
 
     const today = new Date().toLocaleDateString("en-CA");
 
-    // 1. keep only the tasks that match the selected tab
+    // Filter tasks
     const filtered = tasks.filter((task) => {
         if (filter === "pending") return !task.done;
         if (filter === "completed") return task.done;
         return true;
     });
 
-    // 2. sort them (we copy the list first so the original is not changed)
+    // Sort tasks
     const visible = [...filtered].sort((a, b) => {
         if (sortBy === "priority") {
             return priorityRank[a.priority] - priorityRank[b.priority];
         }
+
         return a.dueDate.localeCompare(b.dueDate);
     });
 
     return (
         <div className="task-card">
+
             <div className="task-card-top">
                 <h3>
                     <List size={22} /> My Tasks
@@ -81,6 +84,7 @@ function TaskTable({ tasks, onToggle, onDelete }) {
 
             <div className="table-scroll">
                 <table className="task-table">
+
                     <thead>
                         <tr>
                             <th></th>
@@ -106,7 +110,10 @@ function TaskTable({ tasks, onToggle, onDelete }) {
                             const isOverdue = !task.done && task.dueDate < today;
 
                             return (
-                                <tr key={task.id} className={task.done ? "row-done" : ""}>
+                                <tr
+                                    key={task.id}
+                                    className={task.done ? "row-done" : ""}
+                                >
                                     <td>
                                         <input
                                             type="checkbox"
@@ -115,7 +122,9 @@ function TaskTable({ tasks, onToggle, onDelete }) {
                                         />
                                     </td>
 
-                                    <td className="task-title">{task.title}</td>
+                                    <td className="task-title">
+                                        {task.title}
+                                    </td>
 
                                     <td className={isOverdue ? "due overdue" : "due"}>
                                         {isOverdue && <TriangleAlert size={16} />}
@@ -124,7 +133,8 @@ function TaskTable({ tasks, onToggle, onDelete }) {
 
                                     <td>
                                         <span className={`badge priority-${task.priority.toLowerCase()}`}>
-                                            <PriorityIcon size={14} /> {task.priority}
+                                            {PriorityIcon && <PriorityIcon size={14} />}
+                                            {task.priority}
                                         </span>
                                     </td>
 
@@ -141,9 +151,15 @@ function TaskTable({ tasks, onToggle, onDelete }) {
                                     </td>
 
                                     <td className="actions">
-                                        <button className="icon-btn edit" title="Edit">
+
+                                        <button
+                                            className="icon-btn edit"
+                                            title="Edit"
+                                            onClick={() => onEdit(task)}
+                                        >
                                             <Pencil size={18} />
                                         </button>
+
                                         <button
                                             className="icon-btn delete"
                                             title="Delete"
@@ -151,17 +167,20 @@ function TaskTable({ tasks, onToggle, onDelete }) {
                                         >
                                             <Trash2 size={18} />
                                         </button>
+
                                     </td>
                                 </tr>
                             );
                         })}
                     </tbody>
+
                 </table>
             </div>
 
             <p className="showing">
                 Showing {visible.length} of {tasks.length} tasks
             </p>
+
         </div>
     );
 }

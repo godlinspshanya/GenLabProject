@@ -14,6 +14,17 @@ const userSchema = new mongoose.Schema(
             unique: true,
             lowercase: true,
             trim: true
+        },
+
+        phone: {
+            type: String,
+            trim: true,
+            match: [/^\d{10}$/, "Please enter a valid 10-digit phone number"]
+        },
+
+        gender: {
+            type: String,
+            enum: ["Female", "Male", "Other", "Prefer not to say"]
         }
     },
     {

@@ -8,6 +8,9 @@ import "./Signup.css";
 function Signup() {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
+    const [phone, setPhone] = useState("");
+    const [gender, setGender] = useState("");
+
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
@@ -30,6 +33,8 @@ function Signup() {
                     body: JSON.stringify({
                         name: name.trim(),
                         email: email.trim().toLowerCase(),
+                        phone: phone.trim(),
+                        gender,
                         purpose: "signup"
                     })
                 }
@@ -45,6 +50,8 @@ function Signup() {
                 state: {
                     name: name.trim(),
                     email: email.trim().toLowerCase(),
+                    phone: phone.trim(),
+                    gender,
                     purpose: "signup"
                 }
             });
@@ -86,8 +93,37 @@ function Signup() {
                         required
                     />
 
+                    <input
+                        type="tel"
+                        placeholder="Enter your phone number"
+                        value={phone}
+                        onChange={(e) =>
+                            setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))
+                        }
+                        pattern="[0-9]{10}"
+                        title="Enter a valid 10-digit phone number"
+                        maxLength={10}
+                        required
+                    />
+
+                    <select
+                        value={gender}
+                        onChange={(e) => setGender(e.target.value)}
+                        required
+                    >
+                        <option value="" disabled>
+                            Select your gender
+                        </option>
+                        <option value="Female">Female</option>
+                        <option value="Male">Male</option>
+                        <option value="Other">Other</option>
+                        <option value="Prefer not to say">
+                            Prefer not to say
+                        </option>
+                    </select>
+
                     {error && (
-                        <p style={{ color: "#ff6b6b" }}>
+                        <p className="signup-error">
                             {error}
                         </p>
                     )}

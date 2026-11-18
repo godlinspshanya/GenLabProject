@@ -1,11 +1,27 @@
-import { useState } from "react";
-import { Plus, CircleAlert } from "lucide-react";
 
-function AddTaskForm({ onAdd }) {
+import { useState, useEffect } from "react";
+import { Plus, CircleAlert, Save, X } from "lucide-react";
+
+function AddTaskForm({ onAdd, editingTask, onUpdate, onCancel }) {
     const [title, setTitle] = useState("");
     const [dueDate, setDueDate] = useState("");
     const [priority, setPriority] = useState("Auto");
     const [error, setError] = useState("");
+
+    // Load selected task details into the form
+    useEffect(() => {
+        if (editingTask) {
+            setTitle(editingTask.title);
+            setDueDate(editingTask.dueDate);
+            setPriority(editingTask.priority);
+        } else {
+            setTitle("");
+            setDueDate("");
+            setPriority("Auto");
+        }
+
+        setError("");
+    }, [editingTask]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -15,27 +31,46 @@ function AddTaskForm({ onAdd }) {
             return;
         }
 
-        // Send the data UP to Home.jsx
-        onAdd({ title: title.trim(), dueDate, priority });
+        const taskData = {
+            title: title.trim(),
+            dueDate,
+            priority
+        };
 
-        // Clear the form
-        setTitle("");
-        setDueDate("");
-        setPriority("Auto");
+        if (editingTask) {
+            onUpdate(editingTask.id, taskData);
+        } else {
+            onAdd(taskData);
+
+            setTitle("");
+            setDueDate("");
+            setPriority("Auto");
+        }
+
+        setError("");
+    };
+
+    const handleCancel = () => {
+        onCancel();
         setError("");
     };
 
     return (
         <form className="add-task" onSubmit={handleSubmit}>
+
             <div className="add-task-header">
                 <span className="add-task-icon">
-                    <Plus size={18} />
+                    {editingTask ? <Save size={18} /> : <Plus size={18} />}
                 </span>
-                <h3>Add New Task</h3>
+
+                <h3>
+                    {editingTask ? "Edit Task" : "Add New Task"}
+                </h3>
             </div>
 
             <label>
                 Task Title <span className="required">*</span>
+
                 <input
                     type="text"
                     placeholder="Enter task name..."
@@ -46,6 +81,7 @@ function AddTaskForm({ onAdd }) {
 
             <label>
                 Due Date <span className="required">*</span>
+
                 <input
                     type="date"
                     value={dueDate}
@@ -55,13 +91,18 @@ function AddTaskForm({ onAdd }) {
 
             <label>
                 Priority Level
+
                 <div className="select-wrap">
                     <CircleAlert size={18} className="select-icon" />
+
                     <select
                         value={priority}
                         onChange={(e) => setPriority(e.target.value)}
                     >
-                        <option value="Auto">Auto (Based on Due Date)</option>
+                        <option value="Auto">
+                            Auto (Based on Due Date)
+                        </option>
+
                         <option value="High">High</option>
                         <option value="Medium">Medium</option>
                         <option value="Low">Low</option>
@@ -69,11 +110,26 @@ function AddTaskForm({ onAdd }) {
                 </div>
             </label>
 
-            {error && <p className="form-error">{error}</p>}
+            {error && (
+                <p className="form-error">{error}</p>
+            )}
 
             <button type="submit" className="add-task-button">
-                Add Task <Plus size={18} />
+                {editingTask ? "Save Changes" : "Add Task"}
+
+                {editingTask ? <Save size={18} /> : <Plus size={18} />}
             </button>
+
+            {editingTask && (
+                <button
+                    type="button"
+                    className="add-task-button"
+                    onClick={handleCancel}
+                >
+                    Cancel <X size={18} />
+                </button>
+            )}
+
         </form>
     );
 }

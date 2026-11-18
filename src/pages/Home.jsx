@@ -1,26 +1,18 @@
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
-import { ClipboardList, Clock, TriangleAlert, CircleCheck } from "lucide-react";
+import {
+    ClipboardList,
+    Clock,
+    TriangleAlert,
+    CircleCheck
+} from "lucide-react";
 
 import Sidebar from "../components/Sidebar";
 import Topbar from "../components/Topbar";
 import StatCard from "../components/StatCard";
-import AddTaskForm from "../components/AddTaskForm";
-import TaskTable from "../components/TaskTable";
 import "./Home.css";
 
-// Sample tasks so the page is not empty at the start.
-// To start with an empty list, change this to:  const sampleTasks = [];
-const sampleTasks = [
-    { id: 1, title: "Complete Web Development Project", dueDate: "2026-11-12", priority: "High", done: false },
-    { id: 2, title: "Prepare DSA Notes", dueDate: "2026-11-15", priority: "Medium", done: false },
-    { id: 3, title: "Read The Silent Patient", dueDate: "2026-11-16", priority: "Low", done: false },
-    { id: 4, title: "Finish English Grammar Practice", dueDate: "2026-11-18", priority: "Medium", done: false },
-    { id: 5, title: "Submit Environment Assignment", dueDate: "2026-11-20", priority: "High", done: false },
-    { id: 6, title: "Learn Java Collections", dueDate: "2026-11-10", priority: "Medium", done: true }
-];
-
-// Read the logged-in user that Login.jsx saved
 function getSavedUser() {
     try {
         return JSON.parse(localStorage.getItem("user"));
@@ -29,70 +21,88 @@ function getSavedUser() {
     }
 }
 
-// Decide priority from how soon the task is due
-function autoPriority(dueDate) {
-    const today = new Date(new Date().toLocaleDateString("en-CA"));
-    const due = new Date(dueDate);
-
-    const daysLeft = Math.round((due - today) / (1000 * 60 * 60 * 24));
-
-    if (daysLeft <= 2) return "High";    // due within 2 days, or overdue
-    if (daysLeft <= 7) return "Medium";  // due within a week
-    return "Low";
+function formatTask(task) {
+    return {
+        id: task._id,
+        title: task.title,
+        dueDate: new Date(task.dueDate).toISOString().slice(0, 10),
+        priority: task.priority,
+        done: task.completed
+    };
 }
 
 function Home() {
     const navigate = useNavigate();
     const user = getSavedUser();
+    const token = localStorage.getItem("token");
 
-    const [tasks, setTasks] = useState(sampleTasks);
+    const [tasks, setTasks] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
 
-    // If nobody is logged in, send them to the login page
-    if (!user) {
+    useEffect(() => {
+        const fetchTasks = async () => {
+            try {
+                const response = await fetch(
+                    "http://localhost:5000/api/tasks",
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    }
+                );
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        localStorage.removeItem("token");
+                        localStorage.removeItem("user");
+                        navigate("/login", { replace: true });
+                        return;
+                    }
+
+                    throw new Error(data.message || "Unable to fetch tasks");
+                }
+
+                setTasks(data.map(formatTask));
+            } catch (err) {
+                setError(err.message || "Something went wrong");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (token) {
+            fetchTasks();
+        }
+    }, [token, navigate]);
+
+    if (!user || !token) {
         return <Navigate to="/login" replace />;
     }
 
-    // ---------- ACTIONS ----------
     const logout = () => {
         localStorage.removeItem("user");
+        localStorage.removeItem("token");
         navigate("/login");
     };
 
-    const addTask = ({ title, dueDate, priority }) => {
-        const newTask = {
-            id: Date.now(),
-            title: title,
-            dueDate: dueDate,
-            priority: priority === "Auto" ? autoPriority(dueDate) : priority,
-            done: false
-        };
-
-        setTasks([newTask, ...tasks]); // new task goes first
-    };
-
-    const toggleTask = (id) => {
-        setTasks(
-            tasks.map((task) =>
-                task.id === id ? { ...task, done: !task.done } : task
-            )
-        );
-    };
-
-    const deleteTask = (id) => {
-        setTasks(tasks.filter((task) => task.id !== id));
-    };
-
-    // ---------- NUMBERS FOR THE STAT CARDS ----------
-    const today = new Date().toLocaleDateString("en-CA"); // gives 2026-11-13
+    const today = new Date().toLocaleDateString("en-CA");
 
     const total = tasks.length;
-    const completed = tasks.filter((task) => task.done).length;
+    const completed = tasks.filter(task => task.done).length;
     const pending = total - completed;
+
     const overdue = tasks.filter(
-        (task) => !task.done && task.dueDate < today
+        task => !task.done && task.dueDate < today
     ).length;
 
     const firstName = (user.name || user.email).split(" ")[0];
+
+    const recentTasks = [...tasks]
+        .sort((a, b) => b.id.localeCompare(a.id))
+        .slice(0, 5);
 
     return (
         <div className="home-layout">
@@ -102,30 +112,114 @@ function Home() {
                 <Topbar user={user} />
 
                 <div className="home-body">
+
                     <section className="welcome">
                         <div>
-                            <h1>Welcome back, {firstName}! 👋</h1>
-                            <p>Stay organized, complete your tasks, and achieve your goals!</p>
+                            <h1>Welcome back, {firstName}!</h1>
+                            <p>
+                                Stay organized, complete your tasks,
+                                and achieve your goals!
+                            </p>
                         </div>
+
                         <p className="motto">You've got this!</p>
                     </section>
 
                     <section className="stats">
-                        <StatCard icon={ClipboardList} value={total} label="Total Tasks" color="blue" />
-                        <StatCard icon={Clock} value={pending} label="Pending" color="orange" />
-                        <StatCard icon={TriangleAlert} value={overdue} label="Overdue" color="red" />
-                        <StatCard icon={CircleCheck} value={completed} label="Completed" color="green" />
-                    </section>
-
-                    <section className="content-row">
-                        <TaskTable
-                            tasks={tasks}
-                            onToggle={toggleTask}
-                            onDelete={deleteTask}
+                        <StatCard
+                            icon={ClipboardList}
+                            value={total}
+                            label="Total Tasks"
+                            color="blue"
                         />
 
-                        <AddTaskForm onAdd={addTask} />
+                        <StatCard
+                            icon={Clock}
+                            value={pending}
+                            label="Pending"
+                            color="orange"
+                        />
+
+                        <StatCard
+                            icon={TriangleAlert}
+                            value={overdue}
+                            label="Overdue"
+                            color="red"
+                        />
+
+                        <StatCard
+                            icon={CircleCheck}
+                            value={completed}
+                            label="Completed"
+                            color="green"
+                        />
                     </section>
+
+                    {error && (
+                        <p style={{ color: "#ff6b6b", margin: "12px 0" }}>
+                            {error}
+                        </p>
+                    )}
+
+                    <section style={{ marginTop: "30px" }}>
+                        <h2>Recent Tasks</h2>
+                        <p style={{ color: "#888", marginBottom: "18px" }}>
+                            Here's a quick look at your latest tasks.
+                        </p>
+
+                        {loading ? (
+                            <p>Loading your tasks...</p>
+                        ) : recentTasks.length === 0 ? (
+                            <p>You haven't added any tasks yet.</p>
+                        ) : (
+                            <div>
+                                {recentTasks.map(task => (
+                                    <div
+                                        key={task.id}
+                                        style={{
+                                            display: "flex",
+                                            justifyContent: "space-between",
+                                            alignItems: "center",
+                                            padding: "16px",
+                                            marginBottom: "10px",
+                                            background: "#fff",
+                                            borderRadius: "10px",
+                                            border: "1px solid #eee",
+                                            gap: "12px"
+                                        }}
+                                    >
+                                        <div>
+                                            <strong>{task.title}</strong>
+                                            <p style={{
+                                                color: "#888",
+                                                fontSize: "13px",
+                                                marginTop: "5px"
+                                            }}>
+                                                Due: {task.dueDate}
+                                            </p>
+                                        </div>
+
+                                        <span style={{
+                                            fontSize: "13px",
+                                            fontWeight: "600",
+                                            color: task.done
+                                                ? "#16a34a"
+                                                : task.dueDate < today
+                                                    ? "#dc2626"
+                                                    : "#d97706"
+                                        }}>
+                                            {task.done
+                                                ? "Completed"
+                                                : task.dueDate < today
+                                                    ? "Overdue"
+                                                    : "Pending"}
+                                        </span>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </section>
+
                 </div>
             </div>
         </div>

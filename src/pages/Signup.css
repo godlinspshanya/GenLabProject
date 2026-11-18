@@ -6,7 +6,7 @@
     align-items: center;
     background: #ebebef;
     padding: 30px 20px;
-    color: white;
+    color: #101010;
 }
 
 .signup-content {
@@ -23,47 +23,60 @@
 }
 
 .signup-subtitle {
-    color: #a5a5a5;
+    color: #888;
     font-size: 15px;
-    margin-bottom: 35px;
+    margin-bottom: 30px;
 }
 
 .signup-content form {
     display: flex;
     flex-direction: column;
-    gap: 18px;
+    gap: 16px;
 }
 
-.signup-content input {
+.signup-content input,
+.signup-content select {
     width: 100%;
     padding: 16px;
-    border: 1px solid #454545;
+    border: 1px solid #b5cde0;
     border-radius: 8px;
-    background: #222225;
-    color: rgb(8, 8, 8);
+    background: #8ecef6;
+    color: #222;
     font-size: 16px;
     outline: none;
 }
 
-.signup-content input:focus {
-    border-color: #51ADE8;
+.signup-content input::placeholder {
+    color: #555;
 }
 
-.signup-content input::placeholder {
-    color: #999;
-    
+.signup-content input:focus,
+.signup-content select:focus {
+    border-color: #3B71C1;
+    box-shadow: 0 0 0 2px rgba(59, 113, 193, 0.12);
 }
-.signup-content input {
-    background: #8ecef6; /* change this to your preferred color */
-    color: #222;          /* text color */
+
+.signup-content select {
+    cursor: pointer;
 }
+
+.signup-content select:invalid {
+    color: #555;
+}
+
+.signup-error {
+    color: #e53935;
+    font-size: 14px;
+    margin: 0;
+}
+
 .signup-button {
     width: 100%;
     padding: 16px;
     border: none;
     border-radius: 8px;
     background: linear-gradient(90deg, #3B71C1, #51ADE8);
-    color: rgb(20, 20, 20);
+    color: #fff;
     font-size: 17px;
     font-weight: 600;
     cursor: pointer;
@@ -73,18 +86,34 @@
     opacity: 0.9;
 }
 
+.signup-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
 .login-redirect {
     margin-top: 25px;
-    color: #aaa;
+    color: #888;
     font-size: 15px;
 }
 
 .login-redirect a {
-    color: #51ADE8;
+    color: #3B71C1;
     text-decoration: none;
     font-weight: 600;
 }
 
 .login-redirect a:hover {
     text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+    .signup-content h1 {
+        font-size: 27px;
+    }
+
+    .signup-content input,
+    .signup-content select {
+        padding: 14px;
+    }
 }

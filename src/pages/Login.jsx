@@ -17,6 +17,7 @@ function Login() {
     const [email, setEmail] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
@@ -27,14 +28,15 @@ function Login() {
 
         try {
             const response = await fetch(
-                `${API_URL}/api/auth/login`,
+                `${API_URL}/api/auth/send-otp`,
                 {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify({
-                        email: email.trim().toLowerCase()
+                        email: email.trim().toLowerCase(),
+                        purpose: "login"
                     })
                 }
             );
@@ -42,12 +44,17 @@ function Login() {
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.message || "Unable to log in");
+                throw new Error(
+                    data.message || "Unable to send OTP"
+                );
             }
 
-            localStorage.setItem("user", JSON.stringify(data.user));
-
-            navigate("/home");
+            navigate("/verify-otp", {
+                state: {
+                    email: email.trim().toLowerCase(),
+                    purpose: "login"
+                }
+            });
 
         } catch (err) {
             setError(err.message || "Something went wrong");
@@ -82,7 +89,7 @@ function Login() {
                         className="continue-button"
                         disabled={loading}
                     >
-                        {loading ? "Logging in..." : "Continue"}
+                        {loading ? "Sending OTP..." : "Continue"}
                     </button>
 
                 </form>
