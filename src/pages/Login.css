@@ -26,6 +26,11 @@
     text-align: center;
 }
 
+.login-content > .logo img {
+    width: 260px;
+    height: 260px;
+}
+
 .login-content h1 {
     color: #101010;
     font-size: 30px;
@@ -99,6 +104,11 @@
 }
 
 @media (max-width: 600px) {
+
+    .login-content > .logo img {
+        width: 200px;
+        height: 200px;
+    }
 
     .login-content h1 {
         font-size: 25px;
