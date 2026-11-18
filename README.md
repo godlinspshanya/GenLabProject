@@ -39,27 +39,64 @@ A full-stack Task Management application developed during my internship at **Gen
 
 ## 📁 Project Structure
 
-```text
-NewProject(GenLab)/
+Task-Manager/
 │
-├── src/
-│   ├── components/
-│   ├── pages/
-│   ├── assets/
-│   ├── App.jsx
-│   └── main.jsx
+├── public/
 │
 ├── server/
 │   ├── models/
+│   │   ├── User.js
+│   │   └── Task.js
+│   │
 │   ├── index.js
-│   ├── .env
-│   └── package.json
+│   ├── package.json
+│   ├── package-lock.json
+│   └── .env
 │
-├── public/
+├── src/
+│   │
+│   ├── assets/
+│   │   ├── Google.png
+│   │   ├── hero.png
+│   │   ├── zion logo.png
+│   │   └── student-illustration.png.png
+│   │
+│   ├── components/
+│   │   ├── AddTaskForm.jsx
+│   │   ├── Divider.jsx
+│   │   ├── Divider.css
+│   │   ├── GoogleButton.jsx
+│   │   ├── GoogleButton.css
+│   │   ├── InputField.jsx
+│   │   ├── InputField.css
+│   │   ├── Logo.jsx
+│   │   ├── Logo.css
+│   │   ├── Sidebar.jsx
+│   │   └── TaskTable.jsx
+│   │
+│   ├── pages/
+│   │   ├── Login.jsx
+│   │   ├── Signup.jsx
+│   │   ├── Signup.css
+│   │   ├── OTP.jsx
+│   │   ├── Landing.jsx
+│   │   ├── Landing.css
+│   │   ├── Home.jsx
+│   │   ├── MyTasks.jsx
+│   │   └── Users.jsx
+│   │
+│   ├── App.jsx
+│   ├── App.css
+│   ├── index.css
+│   └── main.jsx
+│
+├── .gitignore
+├── eslint.config.js
 ├── index.html
 ├── package.json
-└── README.md
-```
+├── package-lock.json
+├── README.md
+└── vite.config.js
 
 ## ⚙️ Installation and Setup
 
