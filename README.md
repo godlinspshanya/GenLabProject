@@ -39,6 +39,7 @@ A full-stack Task Management application developed during my internship at **Gen
 
 ## 📁 Project Structure
 
+
 Task-Manager/
 │
 ├── public/
