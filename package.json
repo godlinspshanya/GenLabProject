@@ -4,15 +4,16 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-  "dev": "vite",
-  "dev:frontend": "vite",
-  "dev:backend": "npm --prefix server run dev",
-  "dev:all": "concurrently -k \"npm run dev:backend\" \"npm run dev:frontend\"",
-  "build": "vite build",
-  "preview": "vite preview"
-},
+    "dev": "vite",
+    "dev:frontend": "vite",
+    "dev:backend": "npm --prefix server run dev",
+    "dev:all": "concurrently -k \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
   "dependencies": {
     "@react-oauth/google": "^0.13.5",
+    "gsap": "^3.15.1",
     "lucide-react": "^1.72.0",
     "motion": "^14.14.0",
     "react": "^19.3.1",
@@ -36,6 +37,4 @@
   "keywords": [],
   "author": "",
   "license": "ISC"
-  
 }
-
