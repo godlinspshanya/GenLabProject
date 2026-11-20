@@ -625,26 +625,6 @@ if (!user) {
     }
 });
 
-// ---------- GET ALL REGISTERED USERS ----------
-
-app.get("/api/users", requireAuth, async (req, res) => {
-    try {
-        const users = await User.find()
-            .select("name email phone gender createdAt")
-            .sort({ createdAt: -1 })
-            .lean();
-
-        res.json(users);
-
-    } catch (error) {
-        console.error("Fetch users error:", error);
-
-        res.status(500).json({
-            message: "Unable to fetch registered users"
-        });
-    }
-});
-
 // ---------- SERVER START ----------
 
 const PORT = process.env.PORT || 5000;
@@ -794,6 +774,25 @@ app.put("/api/tasks/:id", requireAuth, async (req, res) => {
             });
         }
 
+        if (completed !== undefined) {
+            const currentTask = await Task.findOne({
+                _id: req.params.id,
+                user: req.userId
+            })
+                .select("completed")
+                .lean();
+
+            if (!currentTask) {
+                return res.status(404).json({
+                    message: "Task not found"
+                });
+            }
+
+            if (currentTask.completed !== completed) {
+                updates.completedAt = completed ? new Date() : null;
+            }
+        }
+
         const task = await Task.findOneAndUpdate(
             {
                 _id: req.params.id,
@@ -801,7 +800,7 @@ app.put("/api/tasks/:id", requireAuth, async (req, res) => {
             },
             updates,
             {
-                new: true,
+                returnDocument: 'after',
                 runValidators: true
             }
         );

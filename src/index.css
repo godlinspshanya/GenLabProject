@@ -20,3 +20,35 @@ button,
 input {
     font-family: inherit;
 }
+
+:root {
+    color-scheme: light;
+    --dashboard-page: #eef1fb;
+    --dashboard-surface: #fff;
+    --dashboard-surface-muted: #f7f9ff;
+    --dashboard-control: #fff;
+    --dashboard-control-muted: #f1f3fa;
+    --dashboard-text: #141414;
+    --dashboard-heading: #12214d;
+    --dashboard-muted: #68718a;
+    --dashboard-border: #e6eaf4;
+    --dashboard-table-border: #eef0f6;
+}
+
+:root[data-theme="dark"] {
+    color-scheme: dark;
+    --dashboard-page: #111827;
+    --dashboard-surface: #1b2638;
+    --dashboard-surface-muted: #222f44;
+    --dashboard-control: #172235;
+    --dashboard-control-muted: #28364d;
+    --dashboard-text: #e6ebf4;
+    --dashboard-heading: #f1f5ff;
+    --dashboard-muted: #aab5c8;
+    --dashboard-border: #36445b;
+    --dashboard-table-border: #344158;
+}
+
+:root[data-theme="dark"] body {
+    background: var(--dashboard-page);
+}

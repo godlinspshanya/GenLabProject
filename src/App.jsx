@@ -4,12 +4,23 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-route
 
 import Home from "./pages/Home";
 import MyTasks from "./pages/MyTasks";
+import Calendar from "./pages/Calendar";
+import MyProgress from "./pages/MyProgress";
+import Profile from "./pages/Profile";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import OTP from "./pages/OTP";
-import Users from "./pages/Users";
 import Landing from "./pages/Landing";
 import Preloader from "./components/Preloader";
+
+function getSavedTheme() {
+    try {
+        return localStorage.getItem("theme") === "dark" ? "dark" : "light";
+    } catch (error) {
+        console.error("Unable to read the saved theme preference:", error);
+        return "light";
+    }
+}
 
 function ScrollToTop() {
     const { pathname } = useLocation();
@@ -29,7 +40,18 @@ function ScrollToTop() {
 
 function App() {
     const [introComplete, setIntroComplete] = useState(false);
+    const [theme, setTheme] = useState(getSavedTheme);
     const completeIntro = useCallback(() => setIntroComplete(true), []);
+
+    useLayoutEffect(() => {
+        document.documentElement.dataset.theme = theme;
+
+        try {
+            localStorage.setItem("theme", theme);
+        } catch (error) {
+            console.error("Unable to save the theme preference:", error);
+        }
+    }, [theme]);
 
     return (
         <BrowserRouter>
@@ -49,9 +71,26 @@ function App() {
                     <Route path="/verify-otp" element={<OTP />} />
 
                     {/* Main Pages */}
-                    <Route path="/home" element={<Home />} />
-                    <Route path="/my-tasks" element={<MyTasks />} />
-                    <Route path="/users" element={<Users />} />
+                    <Route
+                        path="/home"
+                        element={<Home theme={theme} onThemeChange={setTheme} />}
+                    />
+                    <Route
+                        path="/my-tasks"
+                        element={<MyTasks theme={theme} onThemeChange={setTheme} />}
+                    />
+                    <Route
+                        path="/calendar"
+                        element={<Calendar theme={theme} onThemeChange={setTheme} />}
+                    />
+                    <Route
+                        path="/my-progress"
+                        element={<MyProgress theme={theme} onThemeChange={setTheme} />}
+                    />
+                    <Route
+                        path="/profile"
+                        element={<Profile theme={theme} onThemeChange={setTheme} />}
+                    />
                     <Route path="/" element={<Navigate to="/login" replace />} />
                 </Routes>
             </div>

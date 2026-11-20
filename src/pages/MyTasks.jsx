@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
 
 import Sidebar from "../components/Sidebar";
 import Topbar from "../components/Topbar";
@@ -40,8 +40,14 @@ function formatTask(task) {
     };
 }
 
-function MyTasks() {
+function announceTaskChange() {
+    window.dispatchEvent(new Event("tasks:changed"));
+}
+
+function MyTasks({ theme, onThemeChange }) {
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+    const highlightedTaskId = searchParams.get("task");
 
     const user = getSavedUser();
     const token = localStorage.getItem("token");
@@ -92,6 +98,13 @@ function MyTasks() {
         }
     }, [token, navigate]);
 
+    useEffect(() => {
+        if (loading || !highlightedTaskId) return;
+
+        const row = document.getElementById(`task-row-${highlightedTaskId}`);
+        row?.scrollIntoView?.({ behavior: "smooth", block: "center" });
+    }, [highlightedTaskId, loading, tasks]);
+
     if (!user || !token) {
         return <Navigate to="/login" replace />;
     }
@@ -139,6 +152,7 @@ function MyTasks() {
                 formatTask(data.task),
                 ...previousTasks
             ]);
+            announceTaskChange();
 
         } catch (err) {
             setError(err.message || "Something went wrong");
@@ -187,6 +201,7 @@ function MyTasks() {
                     task.id === id ? formatTask(data.task) : task
                 )
             );
+            announceTaskChange();
 
             setEditingTask(null);
 
@@ -229,6 +244,7 @@ function MyTasks() {
                     task.id === id ? formatTask(data.task) : task
                 )
             );
+            announceTaskChange();
 
         } catch (err) {
             setError(err.message || "Something went wrong");
@@ -259,6 +275,7 @@ function MyTasks() {
             setTasks(previousTasks =>
                 previousTasks.filter(task => task.id !== id)
             );
+            announceTaskChange();
 
             if (editingTask?.id === id) {
                 setEditingTask(null);
@@ -276,7 +293,12 @@ function MyTasks() {
 
             <div className="home-main">
 
-                <Topbar user={user} />
+                <Topbar
+                    user={user}
+                    theme={theme}
+                    onThemeChange={onThemeChange}
+                    onLogout={logout}
+                />
 
                 <div className="home-body">
 
@@ -303,6 +325,7 @@ function MyTasks() {
 
                             <TaskTable
                                 tasks={tasks}
+                                highlightedTaskId={highlightedTaskId}
                                 onToggle={toggleTask}
                                 onDelete={deleteTask}
                                 onEdit={editTask}

@@ -3,7 +3,8 @@ import {
     GraduationCap,
     House,
     ClipboardCheck,
-    Users,
+    CalendarDays,
+    Target,
     LogOut
 } from "lucide-react";
 
@@ -12,7 +13,8 @@ import { useNavigate, useLocation } from "react-router-dom";
 const menuItems = [
     { label: "Home", icon: House, path: "/home" },
     { label: "My Tasks", icon: ClipboardCheck, path: "/my-tasks" },
-    { label: "Users", icon: Users, path: "/users" }
+    { label: "Calendar", icon: CalendarDays, path: "/calendar" },
+    { label: "My Progress", icon: Target, path: "/my-progress" }
 ];
 
 function Sidebar({ onLogout }) {
@@ -31,12 +33,14 @@ function Sidebar({ onLogout }) {
 
                 {menuItems.map((item) => {
                     const Icon = item.icon;
-                    const active = location.pathname === item.path;
+                    const active = !item.disabled && location.pathname === item.path;
 
                     return (
                         <button
                             key={item.path}
                             className={active ? "nav-item active" : "nav-item"}
+                            disabled={item.disabled}
+                            title={item.disabled ? "Coming soon" : undefined}
                             onClick={() => navigate(item.path)}
                         >
                             <Icon size={22} />

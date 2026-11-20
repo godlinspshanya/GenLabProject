@@ -2,6 +2,7 @@
 import { useState } from "react";
 import {
     List,
+    Search,
     ArrowUp,
     ArrowRight,
     ArrowDown,
@@ -28,21 +29,29 @@ function formatDate(dateText) {
     });
 }
 
-function TaskTable({ tasks, onToggle, onDelete, onEdit }) {
+function TaskTable({ tasks, highlightedTaskId, onToggle, onDelete, onEdit }) {
     const [filter, setFilter] = useState("all");
     const [sortBy, setSortBy] = useState("date");
+    const [searchQuery, setSearchQuery] = useState("");
+    const [priorityFilter, setPriorityFilter] = useState("all");
 
     const today = new Date().toLocaleDateString("en-CA");
+    const normalizedQuery = searchQuery.trim().toLowerCase();
 
-    // Filter tasks
     const filtered = tasks.filter((task) => {
-        if (filter === "pending") return !task.done;
-        if (filter === "completed") return task.done;
-        return true;
+        const matchesStatus =
+            filter === "all" ||
+            (filter === "pending" && !task.done) ||
+            (filter === "completed" && task.done);
+        const matchesPriority =
+            priorityFilter === "all" || task.priority === priorityFilter;
+        const matchesTitle = task.title.toLowerCase().includes(normalizedQuery);
+
+        return matchesStatus && matchesPriority && matchesTitle;
     });
 
     // Sort tasks
-    const visible = [...filtered].sort((a, b) => {
+    const visible = filtered.sort((a, b) => {
         if (sortBy === "priority") {
             return priorityRank[a.priority] - priorityRank[b.priority];
         }
@@ -59,6 +68,17 @@ function TaskTable({ tasks, onToggle, onDelete, onEdit }) {
                 </h3>
 
                 <div className="task-controls">
+                    <label className="task-search">
+                        <Search size={17} aria-hidden="true" />
+                        <input
+                            type="search"
+                            aria-label="Search tasks by title"
+                            placeholder="Search by title"
+                            value={searchQuery}
+                            onChange={(event) => setSearchQuery(event.target.value)}
+                        />
+                    </label>
+
                     <div className="tabs">
                         {["all", "pending", "completed"].map((name) => (
                             <button
@@ -78,6 +98,18 @@ function TaskTable({ tasks, onToggle, onDelete, onEdit }) {
                     >
                         <option value="date">Sort by: Due Date</option>
                         <option value="priority">Sort by: Priority</option>
+                    </select>
+
+                    <select
+                        className="sort-select"
+                        aria-label="Filter by priority"
+                        value={priorityFilter}
+                        onChange={(event) => setPriorityFilter(event.target.value)}
+                    >
+                        <option value="all">All priorities</option>
+                        <option value="High">High priority</option>
+                        <option value="Medium">Medium priority</option>
+                        <option value="Low">Low priority</option>
                     </select>
                 </div>
             </div>
@@ -111,8 +143,13 @@ function TaskTable({ tasks, onToggle, onDelete, onEdit }) {
 
                             return (
                                 <tr
+                                    id={`task-row-${task.id}`}
                                     key={task.id}
-                                    className={task.done ? "row-done" : ""}
+                                    tabIndex={task.id === highlightedTaskId ? -1 : undefined}
+                                    className={[
+                                        task.done && "row-done",
+                                        task.id === highlightedTaskId && "task-highlighted"
+                                    ].filter(Boolean).join(" ")}
                                 >
                                     <td>
                                         <input
