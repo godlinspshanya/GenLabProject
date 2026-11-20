@@ -175,6 +175,7 @@ const hashOTP = (otp) =>
 
 // ---------- GOOGLE SHEETS INTEGRATION ----------
 
+
 const addUserToGoogleSheet = async (user) => {
     const sheetUrl = process.env.GOOGLE_SHEET_WEB_APP_URL;
     const secret = process.env.GOOGLE_SHEET_SECRET;
@@ -182,6 +183,8 @@ const addUserToGoogleSheet = async (user) => {
     if (!sheetUrl || !secret) {
         throw new Error("Google Sheets environment variables are missing");
     }
+
+    console.log("Sending user to Google Sheets:", user.email);
 
     const response = await fetch(sheetUrl, {
         method: "POST",
@@ -192,12 +195,26 @@ const addUserToGoogleSheet = async (user) => {
             secret,
             name: user.name,
             email: user.email,
-            phone: user.phone,
-            gender: user.gender
+            phone: user.phone || "",
+            gender: user.gender || ""
         })
     });
 
-    const result = await response.json();
+    const responseText = await response.text();
+
+    console.log("Google Sheets HTTP Status:", response.status);
+    console.log("Google Sheets Response:", responseText);
+
+    let result;
+
+    try {
+        result = JSON.parse(responseText);
+    } catch {
+        throw new Error(
+            "Google Sheets returned a non-JSON response: " +
+            responseText.slice(0, 300)
+        );
+    }
 
     if (!response.ok || !result.success) {
         throw new Error(
@@ -205,11 +222,9 @@ const addUserToGoogleSheet = async (user) => {
         );
     }
 
-    console.log(
-        "User successfully added to Google Sheets:",
-        user.email
-    );
+    console.log("User successfully added to Google Sheets:", user.email);
 };
+
 
 // ---------- SEND OTP ----------
 
@@ -565,12 +580,24 @@ app.post("/api/auth/google", async (req, res) => {
 
         let user = await User.findOne({ email });
 
-        if (!user) {
-            user = await User.create({
-                name: payload.name,
-                email
-            });
-        }
+        
+if (!user) {
+    user = await User.create({
+        name: payload.name,
+        email
+    });
+
+    // Sync new Google registration to Google Sheets
+    try {
+        await addUserToGoogleSheet(user);
+    } catch (sheetError) {
+        console.error(
+            "Google Sheets Sync Error:",
+            sheetError.message
+        );
+    }
+}
+
 
         // Generate JWT token.
 
