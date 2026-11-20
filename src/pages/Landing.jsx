@@ -596,7 +596,7 @@ function Landing() {
                     }
                 });
                 footerReveal
-                    .from(".footer-brand > *", { y: 18, autoAlpha: 0, stagger: 0.14, duration: 0.72 }, 0)
+                    .from(".footer-columns > *", { y: 18, autoAlpha: 0, stagger: 0.1, duration: 0.68 }, 0)
                     .from(".footer-divider", { scaleX: 0, duration: 0.8, ease: "power3.inOut" }, 0.32)
                     .from(".footer-bottom > *", { y: 10, autoAlpha: 0, stagger: 0.1, duration: 0.62 }, 0.48);
 
@@ -885,19 +885,108 @@ function Landing() {
             </main>
 
             <footer className="landing-footer">
-                <div className="footer-main">
-                    <div className="footer-brand">
-                        <Link className="landing-logo footer-logo" to="/">
-                            <span className="logo-symbol"><GraduationCap size={19} /></span>
+                <svg className="footer-doodle-art" viewBox="0 0 1600 440" preserveAspectRatio="xMidYMin slice" aria-hidden="true">
+                    <g className="footer-doodle footer-doodle-book" transform="translate(125 0) scale(1.18)">
+                        <path d="M75 41c-22-17-48-20-72-13v89c27-9 51-4 72 14 21-18 46-23 73-14V28c-25-7-51-4-73 13Z" />
+                        <path d="M75 41v90M23 45c16-3 31 1 43 9M23 66c16-3 31 1 43 9M23 87c16-3 31 1 43 9M126 45c-16-3-31 1-43 9M126 66c-16-3-31 1-43 9M126 87c-16-3-31 1-43 9" />
+                    </g>
+                    <g className="footer-doodle footer-doodle-ruler" transform="translate(0 145)">
+                        <path d="m31 16 117 67-14 25L17 41Z" />
+                        <path d="m42 31 9 10m7-2 8 11m6-3 9 11m7-3 8 11m7-3 9 11" />
+                    </g>
+                    <g className="footer-doodle footer-doodle-cap" transform="translate(55 0)">
+                        <path d="m438 72 74-43 79 31-74 47-79-35Z" />
+                        <path d="m457 81 6 36c29 17 64 19 94 0l6-36M589 60v54m0 0c-9 8-7 17 1 23 8-7 10-16 1-23" />
+                    </g>
+                    <g className="footer-doodle footer-doodle-plane">
+                        <path d="m924 45 104-31-54 89-18-36-32-22Zm32 22 72-53" />
+                        <path className="footer-flight-path" d="M886 105c-49 14-50 47-13 43 33-4 6-37-15-13-24 27 2 44-27 53-19 6-31-2-44-11" />
+                    </g>
+                    <g className="footer-doodle footer-doodle-globe" transform="translate(-55 0)">
+                        <circle cx="1303" cy="72" r="51" />
+                        <path d="M1262 50c15 6 26 1 34-10 8-10 17-11 25-6l-4 14 13 9-9 15-17-3-9 12 3 19-16 9-7-14-17-6m42-65c-3 12 0 19 11 23m-44 42c17-3 27 3 33 19m6-112c-13 28-13 68 2 101m17-96c16 26 19 57 7 87" />
+                        <path d="M1297 124v15m-22 8h46m-37-8h28" />
+                    </g>
+                    <g className="footer-doodle footer-doodle-pencil">
+                        <path d="m1480 102 82-87 19 18-82 87-27 8 8-26Z" />
+                        <path d="m1488 96 19 18m45-87 19 18" />
+                    </g>
+                    <g className="footer-doodle footer-doodle-sidebook">
+                        <path d="M-23 335c21-15 43-16 64-5v76c-21-9-43-8-64 4Zm64-5c20-11 43-10 64 5v75c-21-12-43-13-64-4Zm-49 14 31-3m-31 20 31-3m-31 20 31-3m23-14 31-3m-31 20 31-3" />
+                    </g>
+                    <g className="footer-doodle footer-doodle-sidebook right">
+                        <path d="M1525 342c20-15 42-16 63-5v76c-21-9-43-8-63 4Zm63-5c21-11 43-10 64 5v75c-21-12-43-13-64-4Zm-49 14 31-3m-31 20 31-3m-31 20 31-3m23-14 31-3m-31 20 31-3" />
+                    </g>
+                    <g className="footer-doodle footer-doodle-lower-pencil">
+                        <path d="m292 250 76-81 17 16-76 81-25 9 8-25Z" />
+                        <path d="m300 243 17 16m42-75 17 16" />
+                    </g>
+                    <g className="footer-doodle footer-doodle-lower-book">
+                        <path d="M1070 213c24-18 50-19 77-3v67c-26-13-52-12-77 3Zm77-3c25-16 52-15 78 3v67c-26-15-52-16-78-3Zm-62 11c17-4 31-1 45 7m-45 12c17-4 31-1 45 7m33-19c17-8 32-10 49-7m-49 19c17-8 32-10 49-7" />
+                    </g>
+                    <g className="footer-doodle footer-doodle-stars">
+                        <path d="m197 93 4 12 12 4-12 4-4 12-4-12-12-4 12-4 4-12Zm260 83 3 9 9 3-9 3-3 9-3-9-9-3 9-3 3-9Zm699-140 4 12 12 4-12 4-4 12-4-12-12-4 12-4 4-12Zm390 160 4 12 12 4-12 4-4 12-4-12-12-4 12-4 4-12Z" />
+                        <circle cx="364" cy="124" r="3" /><circle cx="814" cy="37" r="3" /><circle cx="1160" cy="160" r="3" /><circle cx="1434" cy="59" r="3" />
+                    </g>
+                </svg>
+                <div className="footer-panel">
+                    <div className="footer-main">
+                        <div className="footer-columns">
+                            <section className="footer-column footer-brand-column">
+                                <svg className="footer-emblem" viewBox="0 0 200 130" aria-hidden="true">
+                                    <g fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="3.5">
+                                        <path d="M100 74c-19-16-39-22-65-20v39c27-2 47 5 65 21 18-16 38-23 65-21V54c-26-2-46 4-65 20Z" />
+                                        <path d="M100 74v40M48 66v21m104-21v21M89 51c-10-12-5-23 4-34 0 10 14 15 13 27 0 8-6 13-13 13-7 0-12-4-12-11 0-4 2-7 5-10" />
+                                        <path d="M26 86c-13-8-20-21-19-37 10 5 16 13 18 23m2 8c-13-2-23-10-28-23 12 1 21 6 27 17m-3 8c-11 5-22 4-32-4 10-5 20-5 29 1m155 7c13-8 20-21 19-37-10 5-16 13-18 23m-2 8c13-2 23-10 28-23-12 1-21 6-27 17m3 8c11 5 22 4 32-4-10-5-20-5-29 1" />
+                                        <path d="M18 45c2 5 3 9 4 14m-13-5c5 1 9 3 13 6m-2 18c-5 1-9 1-13 0m173-33c-2 5-3 9-4 14m13-5c-5 1-9 3-13 6m2 18c5 1 9 1 13 0" />
+                                    </g>
+                                </svg>
+                                <span className="footer-edition">STUDENT EDITION</span>
+                                <h2 className="footer-heading">Dream big.<br />Study smart.<br /><em>Stay organised.</em></h2>
+                                <p className="footer-description">From classroom assignments to personal goals, make every deadline count.</p>
+                                <div className="footer-learning-steps">LEARN <span>•</span> PLAN <span>•</span> ACHIEVE</div>
+                            </section>
+                            <nav className="footer-column footer-links-column" aria-label="Quick links">
+                                <h3>QUICK LINKS</h3>
+                                <a href="#home">Home</a>
+                                <a href="#about">About</a>
+                                <a href="#features">Features</a>
+                                <a href="#product">Product</a>
+                                <a href="#how-it-works">How it works</a>
+                                <a href="#contact">Contact</a>
+                            </nav>
+                            <nav className="footer-column footer-links-column" aria-label="Student resources">
+                                <h3>STUDENT RESOURCES</h3>
+                                <Link to="/home">Dashboard</Link>
+                                <Link to="/my-tasks">My Tasks</Link>
+                                <a href="#features">Task features</a>
+                                <a href="#product">Study workflow</a>
+                                <Link to="/login">Log in</Link>
+                                <Link to="/signup">Get started</Link>
+                            </nav>
+                            <section className="footer-column footer-connect">
+                                <h3>LET’S CONNECT</h3>
+                                <p>Stay organised, keep learning, and make every next step count.</p>
+                                <div className="footer-social-links" aria-label="Task Manager links">
+                                    <Link to="/home" aria-label="Open dashboard"><LayoutGrid size={18} /></Link>
+                                    <Link to="/my-tasks" aria-label="Open my tasks"><ListChecks size={18} /></Link>
+                                    <a href="#contact" aria-label="Go to contact section"><ArrowUpRight size={19} /></a>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                    <div className="footer-divider" aria-hidden="true" />
+                    <div className="footer-bottom">
+                        <Link className="landing-logo footer-logo" to="/" aria-label="Task Manager home">
+                            <span className="logo-symbol"><GraduationCap size={18} /></span>
                             <span>task<span className="logo-light">manager</span></span>
                         </Link>
-                        <p>Make room for the work that matters.</p>
+                        <span className="footer-tagline">Small steps. Big achievements.</span>
+                        <div className="footer-copyright">
+                            <span>© {new Date().getFullYear()} Task Manager. All rights reserved.</span>
+                            <span>Made for doers &amp; dreamers.</span>
+                        </div>
                     </div>
-                </div>
-                <div className="footer-divider" aria-hidden="true" />
-                <div className="footer-bottom">
-                    <span>© {new Date().getFullYear()} Student Task Manager</span>
-                    <span>BUILT FOR THE NEXT THING YOU’LL DO.</span>
                 </div>
             </footer>
         </div>
