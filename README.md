@@ -1,6 +1,10 @@
 # Task Manager
 
-A full-stack Task Management application developed during my internship at **GenLab Pvt. Ltd.** The application allows users to securely register, log in, and manage their daily tasks through a clean and responsive interface.
+A full-stack Task Management application developed during my internship at **GenLab Pvt. Ltd.** The application helps users organize their daily activities, manage tasks, track productivity, and monitor deadlines through a clean and responsive interface.
+
+## 🌐 Live Demo
+
+**Application:** [https://task-manager-student.vercel.app/](https://task-manager-student.vercel.app/)
 
 ## 🚀 Features
 
@@ -8,7 +12,15 @@ A full-stack Task Management application developed during my internship at **Gen
 - **Email OTP Verification:** Secure account registration and login using email OTP.
 - **Google Sign-In:** Authenticate using a Google account.
 - **JWT Authentication:** Secure user sessions using JSON Web Tokens.
-- **Task Management:** Create, view, update, and delete personal tasks.
+- **Task Management:** Create, view, update, complete, and delete personal tasks.
+- **Task Search and Filters:** Search tasks and filter them based on priority and status.
+- **Dashboard:** View total, completed, pending, and overdue task statistics.
+- **Upcoming Deadlines:** Track tasks due today and within the upcoming seven days.
+- **Calendar View:** View and manage scheduled tasks through an interactive monthly calendar.
+- **My Progress:** Monitor productivity through weekly and monthly task analytics.
+- **Notifications:** Receive notifications for tasks due today, upcoming deadlines, and overdue tasks, with read/unread functionality.
+- **Profile Management:** View profile information and access account options.
+- **Light and Dark Mode:** Switch between themes for a comfortable viewing experience.
 - **MongoDB Integration:** Store user and task information in MongoDB Atlas.
 - **Google Sheets Integration:** Automatically record successfully registered users in a Google Sheet.
 - **Responsive UI:** Clean and user-friendly interface.
@@ -36,10 +48,6 @@ A full-stack Task Management application developed during my internship at **Gen
 ### Additional Integration
 - Google Apps Script
 - Google Sheets
-
-## 📁 Project Structure
-
-
 
 ## 📁 Project Structure
 
@@ -102,6 +110,7 @@ Task-Manager/
 └── vite.config.js
 ```
 
+*Note: Update the structure above if your actual filenames or folders differ.*
 
 ## ⚙️ Installation and Setup
 
@@ -114,7 +123,7 @@ git clone YOUR_GITHUB_REPOSITORY_URL
 ### 2. Navigate to the Project
 
 ```bash
-cd NewProject(GenLab)
+cd Task-Manager
 ```
 
 ### 3. Install Frontend Dependencies
@@ -155,7 +164,7 @@ Replace the placeholder values with your actual credentials. Never upload your `
 
 ### Start the Backend
 
-Open a terminal:
+Open a terminal and navigate to the `server` folder:
 
 ```bash
 cd server
@@ -196,31 +205,44 @@ http://localhost:5000
 4. Verified user details are stored in MongoDB Atlas.
 5. Registration details are synchronized with Google Sheets.
 6. Users can log in using email OTP or Google Sign-In.
+7. JWT authentication is used to manage authenticated sessions.
 
 ## 📋 Task Management
 
 Authenticated users can:
-- Create new tasks.
-- View their tasks.
-- Edit existing tasks.
-- Delete completed or unwanted tasks.
 
-Each user can access their own tasks.
+- Create new tasks.
+- View their personal tasks.
+- Edit existing tasks.
+- Mark tasks as completed or pending.
+- Delete unwanted tasks.
+- Search and filter tasks based on their requirements.
+- Track task deadlines through the calendar.
+
+Each user can access only their own tasks.
+
+## 📊 Productivity Tracking
+
+The application provides productivity insights through:
+
+- **Dashboard:** Displays task statistics and overall completion.
+- **Calendar:** Shows tasks according to their scheduled dates.
+- **My Progress:** Provides weekly and monthly productivity insights.
+- **Notifications:** Highlights upcoming, due-today, and overdue tasks.
 
 ## 🔮 Future Enhancements
 
-- Task priority and category management.
-- Task deadlines and reminders.
-- Task status tracking.
-- Dashboard analytics.
-- Improved mobile responsiveness.
+- Advanced task categorization and organization.
+- Enhanced reminder and notification options.
+- Additional productivity reports and insights.
+- Further improvements to mobile responsiveness.
 
-## 👩‍💻 Project Information
+## 👩‍💻 Author
 
-**Project:** Task Manager  
-**Organization:** GenLab Pvt. Ltd.  
-**Domain:** Full Stack Web Development  
-**Type:** Internship Project
+**Godlin Shanya**
+
+
+
 
 ---
 
