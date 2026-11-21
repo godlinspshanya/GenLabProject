@@ -6,7 +6,7 @@ A full-stack Task Management application developed during my internship at **Gen
 
 **Application:** [https://task-manager-student.vercel.app/](https://task-manager-student.vercel.app/)
 
-## 🚀 Features
+##  Features
 
 - **User Registration:** Register with name, email, phone number, and gender.
 - **Email OTP Verification:** Secure account registration and login using email OTP.
@@ -25,7 +25,7 @@ A full-stack Task Management application developed during my internship at **Gen
 - **Google Sheets Integration:** Automatically record successfully registered users in a Google Sheet.
 - **Responsive UI:** Clean and user-friendly interface.
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 ### Frontend
 - React.js
@@ -160,7 +160,7 @@ GOOGLE_SHEET_SECRET=your_private_secret_token
 
 Replace the placeholder values with your actual credentials. Never upload your `.env` file or expose private credentials on GitHub.
 
-## ▶️ Running the Application
+##  Running the Application
 
 ### Start the Backend
 
@@ -197,7 +197,7 @@ The backend runs at:
 http://localhost:5000
 ```
 
-## 🔐 Authentication Flow
+## Authentication Flow
 
 1. Users enter their registration details.
 2. An OTP is sent to their registered email address.
@@ -207,7 +207,7 @@ http://localhost:5000
 6. Users can log in using email OTP or Google Sign-In.
 7. JWT authentication is used to manage authenticated sessions.
 
-## 📋 Task Management
+##  Task Management
 
 Authenticated users can:
 
@@ -221,7 +221,7 @@ Authenticated users can:
 
 Each user can access only their own tasks.
 
-## 📊 Productivity Tracking
+##  Productivity Tracking
 
 The application provides productivity insights through:
 
@@ -230,14 +230,14 @@ The application provides productivity insights through:
 - **My Progress:** Provides weekly and monthly productivity insights.
 - **Notifications:** Highlights upcoming, due-today, and overdue tasks.
 
-## 🔮 Future Enhancements
+##  Future Enhancements
 
 - Advanced task categorization and organization.
 - Enhanced reminder and notification options.
 - Additional productivity reports and insights.
 - Further improvements to mobile responsiveness.
 
-## 👩‍💻 Author
+##  Author
 
 **Godlin Shanya**
 
