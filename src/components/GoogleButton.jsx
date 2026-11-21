@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGoogleLogin } from "@react-oauth/google";
 
+import { API_BASE_URL } from "../config/api";
 import "./GoogleButton.css";
 import logo from "../assets/Google.png";
 
@@ -20,7 +21,7 @@ function GoogleButton() {
 
             try {
                 const response = await fetch(
-                    "http://localhost:5000/api/auth/google",
+                    `${API_BASE_URL}/api/auth/google`,
                     {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },

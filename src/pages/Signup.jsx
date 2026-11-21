@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import Logo from "../components/Logo";
+import { API_BASE_URL } from "../config/api";
 import "./Signup.css";
 
 function Signup() {
@@ -24,7 +25,7 @@ function Signup() {
 
         try {
             const response = await fetch(
-                "http://localhost:5000/api/auth/send-otp",
+                `${API_BASE_URL}/api/auth/send-otp`,
                 {
                     method: "POST",
                     headers: {

@@ -14,6 +14,7 @@ import { Link } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import Topbar from "../components/Topbar";
 import StatCard from "../components/StatCard";
+import { API_BASE_URL } from "../config/api";
 import "./Home.css";
 
 function getSavedUser() {
@@ -63,7 +64,7 @@ function Home({ theme, onThemeChange }) {
         const fetchTasks = async () => {
             try {
                 const response = await fetch(
-                    "http://localhost:5000/api/tasks",
+                    `${API_BASE_URL}/api/tasks`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`

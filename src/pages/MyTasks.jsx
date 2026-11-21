@@ -6,6 +6,7 @@ import Sidebar from "../components/Sidebar";
 import Topbar from "../components/Topbar";
 import AddTaskForm from "../components/AddTaskForm";
 import TaskTable from "../components/TaskTable";
+import { API_BASE_URL } from "../config/api";
 
 import "./Home.css";
 
@@ -63,7 +64,7 @@ function MyTasks({ theme, onThemeChange }) {
         const fetchTasks = async () => {
             try {
                 const response = await fetch(
-                    "http://localhost:5000/api/tasks",
+                    `${API_BASE_URL}/api/tasks`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`
@@ -127,7 +128,7 @@ function MyTasks({ theme, onThemeChange }) {
                     : priority;
 
             const response = await fetch(
-                "http://localhost:5000/api/tasks",
+                `${API_BASE_URL}/api/tasks`,
                 {
                     method: "POST",
                     headers: {
@@ -175,7 +176,7 @@ function MyTasks({ theme, onThemeChange }) {
                     : priority;
 
             const response = await fetch(
-                `http://localhost:5000/api/tasks/${id}`,
+                `${API_BASE_URL}/api/tasks/${id}`,
                 {
                     method: "PUT",
                     headers: {
@@ -220,7 +221,7 @@ function MyTasks({ theme, onThemeChange }) {
             setError("");
 
             const response = await fetch(
-                `http://localhost:5000/api/tasks/${id}`,
+                `${API_BASE_URL}/api/tasks/${id}`,
                 {
                     method: "PUT",
                     headers: {
@@ -257,7 +258,7 @@ function MyTasks({ theme, onThemeChange }) {
             setError("");
 
             const response = await fetch(
-                `http://localhost:5000/api/tasks/${id}`,
+                `${API_BASE_URL}/api/tasks/${id}`,
                 {
                     method: "DELETE",
                     headers: {

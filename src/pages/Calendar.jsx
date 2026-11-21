@@ -11,6 +11,7 @@ import {
 
 import Sidebar from "../components/Sidebar";
 import Topbar from "../components/Topbar";
+import { API_BASE_URL } from "../config/api";
 import "./Home.css";
 import "./Calendar.css";
 
@@ -85,7 +86,7 @@ function Calendar({ theme, onThemeChange }) {
     useEffect(() => {
         const fetchTasks = async () => {
             try {
-                const response = await fetch("http://localhost:5000/api/tasks", {
+                const response = await fetch(`${API_BASE_URL}/api/tasks`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }

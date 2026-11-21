@@ -12,6 +12,7 @@ import {
     UserRound
 } from "lucide-react";
 
+import { API_BASE_URL } from "../config/api";
 import ThemeToggle from "./ThemeToggle";
 
 function getLocalDateKey(date) {
@@ -168,7 +169,7 @@ function Topbar({ user, theme, onThemeChange, onLogout }) {
         if (!token) return;
 
         try {
-            const response = await fetch("http://localhost:5000/api/tasks", {
+            const response = await fetch(`${API_BASE_URL}/api/tasks`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }

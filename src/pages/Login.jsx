@@ -6,12 +6,8 @@ import Logo from "../components/Logo";
 import GoogleButton from "../components/GoogleButton";
 import Divider from "../components/Divider";
 import InputField from "../components/InputField";
+import { API_BASE_URL } from "../config/api";
 import "./Login.css";
-
-// Backend API URL
-const API_URL = (
-    import.meta.env.VITE_API_URL || "http://localhost:5000"
-).replace(/\/+$/, "");
 
 function Login() {
     const [email, setEmail] = useState("");
@@ -28,7 +24,7 @@ function Login() {
 
         try {
             const response = await fetch(
-                `${API_URL}/api/auth/send-otp`,
+                `${API_BASE_URL}/api/auth/send-otp`,
                 {
                     method: "POST",
                     headers: {
